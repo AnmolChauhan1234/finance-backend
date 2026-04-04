@@ -1,24 +1,31 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
 from app.core.config import settings
-from app.api.router import router
+from app.api.router import router as api_router
+
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
-    openapi_url=f"{settings.API_V1_STR}/openapi.json"
+    description="Finance Dashboard Backend with RBAC",
 )
 
-# CORS Rules
+
+# CORS (simple and enough for assignment)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=settings.BACKEND_CORS_ORIGINS or ["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-app.include_router(router, prefix=settings.API_V1_STR)
 
-@app.get("/")
+# Include API routes
+app.include_router(api_router)
+
+
+# Root endpoint (health check)
+@app.get("/", tags=["Health"])
 def root():
     return {"message": "Welcome to Finance Dashboard API"}
