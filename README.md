@@ -11,20 +11,20 @@
 ---
 
 ## 📋 Table of Contents
-
-- [Overview](#-overview)
-- [Tech Stack](#-tech-stack)
-- [Architecture](#-architecture)
-- [Roles & Access Control](#-roles--access-control)
-- [API Overview](#-api-overview)
-- [Features](#-features)
-- [Setup Instructions](#-setup-instructions)
-- [Authentication](#-authentication)
-- [Testing](#-testing)
-- [Trade-offs Considered](#-trade-offs-considered)
-- [Assumptions](#-assumptions)
-- [Possible Enhancements](#-possible-enhancements)
-
+ 
+- [Overview](#overview)
+- [Tech Stack](#tech-stack)
+- [Architecture](#architecture)
+- [Roles & Access Control](#roles-access-control)
+- [API Overview](#api-overview)
+- [Features](#features)
+- [Setup Instructions](#setup-instructions)
+- [Authentication](#authentication)
+- [Testing](#testing)
+- [Trade-offs Considered](#trade-offs-considered)
+- [Assumptions](#assumptions)
+- [Possible Enhancements](#possible-enhancements)
+ 
 ---
 
 ## 🚀 Overview
