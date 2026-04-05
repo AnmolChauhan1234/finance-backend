@@ -18,12 +18,13 @@
 - [Roles and Access Control](#roles-and-access-control)
 - [API Overview](#api-overview)
 - [Features](#features)
+- [Soft Delete](#soft-delete)
 - [Setup Instructions](#setup-instructions)
 - [Authentication](#authentication)
 - [Testing](#testing)
 - [Trade-offs Considered](#trade-offs-considered)
 - [Assumptions](#assumptions)
-- [Possible Enhancements](#possible-enhancements)
+- [What Was Built](#what-was-built)
 
 ---
 
@@ -34,7 +35,7 @@ This project is a backend service for a **finance dashboard** where users intera
 **Core capabilities:**
 
 - User management with role-based access
-- Financial record CRUD operations
+- Financial record CRUD operations with soft delete
 - Dashboard analytics (income, expenses, trends)
 - JWT-based authentication
 - Input validation and meaningful error handling
@@ -79,6 +80,7 @@ app/
 - **Dependency Injection** via `FastAPI Depends` for testability and modularity
 - **Enum normalization** — accepts `"ADMIN"` and `"admin"` interchangeably, with strict internal validation
 - **Database-first migrations** via Alembic for consistent schema management
+- **Soft delete** enforced at the repository layer so no deleted record leaks into any query
 
 ---
 
@@ -90,7 +92,7 @@ Access control is enforced at the API level using dependency-based guards.
 |---|---|
 | `Viewer` | View dashboard data |
 | `Analyst` | View records + analytics |
-| `Admin` | Full access — CRUD on users & records |
+| `Admin` | Full access — CRUD on users & records, restore deleted records |
 
 ---
 
@@ -114,15 +116,16 @@ Access control is enforced at the API level using dependency-based guards.
 | Method | Endpoint | Description |
 |---|---|---|
 | `POST` | `/api/v1/records` | Create a financial record |
-| `GET` | `/api/v1/records` | Get records (filter by `type`, `category`, `date`) |
+| `GET` | `/api/v1/records` | Get active records (filter by `type`, `category`, `date`) |
 | `PUT` | `/api/v1/records/{id}` | Update a record |
-| `DELETE` | `/api/v1/records/{id}` | Delete a record |
+| `DELETE` | `/api/v1/records/{id}` | Soft delete a record |
+| `POST` | `/api/v1/records/{id}/restore` | Restore a soft-deleted record |
 
 ### Dashboard
 
 | Method | Endpoint | Description |
 |---|---|---|
-| `GET` | `/api/v1/dashboard/summary` | Full financial summary |
+| `GET` | `/api/v1/dashboard/summary` | Full financial summary (excludes soft-deleted records) |
 
 The dashboard summary includes:
 - Total income & total expenses
@@ -143,8 +146,8 @@ The dashboard summary includes:
 - Secure JWT-based authentication
 
 ### 2. Financial Records
-- Full CRUD support
-- Filter by type (`income` / `expense`), category, and date
+- Full CRUD support with soft delete
+- Filter by type (`income` / `expense`), category, and date — exact match filtering; `ILIKE` fuzzy search is a planned enhancement
 - Input validation: amount must be > 0, all fields strongly typed
 
 ### 3. Dashboard Analytics
@@ -152,11 +155,38 @@ The dashboard summary includes:
 - Category-wise breakdown
 - Monthly trends
 - Recent activity feed
+- Soft-deleted records are automatically excluded from all analytics
 
 ### 4. Validation and Error Handling
 - Schema validation via **Pydantic**
 - Meaningful HTTP status codes (`400`, `401`, `403`, `404`, `422`)
 - Enum normalization for resilient client integration
+
+---
+
+## Soft Delete
+
+This project implements **proper soft delete** — not just an `is_deleted` flag, but a fully enforced pattern across all layers.
+
+### What was implemented
+
+| Concern | Implementation |
+|---|---|
+| Model flag | `is_deleted` boolean + `deleted_at` timestamp on the record model |
+| Query enforcement | All repository queries filter `is_deleted = false` by default |
+| Delete endpoint | Sets `is_deleted = true` and records `deleted_at` — no row is ever removed |
+| Restore endpoint | `POST /api/v1/records/{id}/restore` reactivates a soft-deleted record |
+| Analytics integrity | Dashboard summary excludes soft-deleted records automatically |
+| Data integrity | Deleted data is preserved in the database for auditing and recovery |
+
+### Why this matters
+
+A naive implementation just adds a column and forgets about it. This implementation:
+
+- Enforces the filter at the **repository layer**, so no query can accidentally return deleted records
+- Handles the **delete and restore lifecycle** explicitly, not as an afterthought
+- Keeps **data integrity intact** — nothing is ever permanently lost
+- Makes the system **audit-friendly** — you always know what was deleted and when
 
 ---
 
@@ -228,6 +258,7 @@ Test coverage includes:
 - Authentication flow
 - User creation & listing
 - Record CRUD operations
+- Soft delete and restore behaviour
 - Dashboard summary endpoint
 
 ---
@@ -240,6 +271,7 @@ Test coverage includes:
 | On-demand Analytics vs Performance | Calculated at request time | Simple to implement; Redis caching can be added in production for scale |
 | Flexible Input vs Strict Validation | Enum normalization (`"ADMIN"` to `"admin"`) | Makes the API resilient to inconsistent client inputs while enforcing strict internal contracts |
 | Monolith vs Distributed | Monolith with clean service/repository separation | Clear boundaries make it straightforward to split into microservices later if needed |
+| Hard Delete vs Soft Delete | Soft delete with restore support | Preserves data integrity and audit history; no record is ever permanently lost |
 
 ---
 
@@ -248,19 +280,43 @@ Test coverage includes:
 - Authentication is simplified using stateless JWT (no refresh token rotation)
 - Financial data is scoped per user — users only access their own records
 - No external third-party integrations (focused on core backend logic)
-- Pagination is basic and can be extended with cursor-based pagination
+- Pagination uses offset-based `skip`/`limit` — sufficient for this scope but can be upgraded to cursor-based for large datasets
+- Soft-deleted records are excluded from all queries and analytics unless explicitly restored
 
 ---
 
-## Possible Enhancements
+## What Was Built
 
-- [ ] Cursor-based pagination & full-text search
-- [ ] Redis caching for dashboard analytics
-- [ ] Rate limiting per user/role
-- [ ] Soft delete support for records and users
-- [ ] JWT refresh token rotation
-- [ ] CI/CD pipeline integration
-- [ ] Deployment on AWS / Render
+This project fulfills all core assignment requirements and goes beyond them with several optional enhancements.
+
+### Core Requirements — All Completed
+
+- [x] User management with role assignment and active/inactive status
+- [x] Financial records CRUD with filtering by type, category, and date
+- [x] Dashboard summary APIs — income, expenses, net balance, category totals, monthly trends
+- [x] Role-based access control enforced at the API level (Viewer / Analyst / Admin)
+- [x] Input validation and structured error handling (Pydantic + HTTP status codes)
+- [x] Data persistence with PostgreSQL and Alembic migrations
+
+### Optional Enhancements — Also Completed
+
+- [x] JWT-based authentication with seeded admin user
+- [x] Soft delete with full restore support (`deleted_at` timestamp, enforced in all queries)
+- [x] Offset-based pagination (`skip` / `limit`) on record listing
+- [x] Unit tests with pytest covering auth, users, records, and dashboard
+- [x] Auto-generated API documentation (Swagger UI at `/docs`)
+- [x] Dockerized setup with single-command startup
+
+### Further Improvements Possible
+
+These are production-scale additions beyond the assignment scope that could be added if needed:
+
+- Cursor-based pagination for better performance on large datasets
+- Full-text / fuzzy search across notes and categories using `ILIKE`
+- Redis caching for dashboard analytics
+- Rate limiting per user or role
+- JWT refresh token rotation
+- CI/CD pipeline and cloud deployment (AWS / Render)
 
 ---
 
