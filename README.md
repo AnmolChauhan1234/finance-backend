@@ -10,12 +10,12 @@
 
 ---
 
-## 📋 Table of Contents
+## Table of Contents
 
 - [Overview](#overview)
 - [Tech Stack](#tech-stack)
 - [Architecture](#architecture)
-- [Roles & Access Control](#roles-access-control)
+- [Roles and Access Control](#roles-and-access-control)
 - [API Overview](#api-overview)
 - [Features](#features)
 - [Setup Instructions](#setup-instructions)
@@ -27,7 +27,7 @@
 
 ---
 
-## 🚀 Overview
+## Overview
 
 This project is a backend service for a **finance dashboard** where users interact with financial records based on their assigned roles. It demonstrates strong backend architecture, clear separation of concerns, and reliable data handling.
 
@@ -41,7 +41,7 @@ This project is a backend service for a **finance dashboard** where users intera
 
 ---
 
-## 🏗️ Tech Stack
+## Tech Stack
 
 | Layer | Technology |
 |---|---|
@@ -55,7 +55,7 @@ This project is a backend service for a **finance dashboard** where users intera
 
 ---
 
-## 🧠 Architecture
+## Architecture
 
 The system follows a strict **layered architecture** to ensure clean separation of concerns:
 
@@ -82,7 +82,7 @@ app/
 
 ---
 
-## 👥 Roles & Access Control
+## Roles and Access Control
 
 Access control is enforced at the API level using dependency-based guards.
 
@@ -94,22 +94,22 @@ Access control is enforced at the API level using dependency-based guards.
 
 ---
 
-## 📡 API Overview
+## API Overview
 
-### 🔐 Auth
+### Auth
 
 | Method | Endpoint | Description |
 |---|---|---|
 | `POST` | `/api/v1/auth/login` | Authenticate and receive a JWT token |
 
-### 👥 Users *(Admin only)*
+### Users *(Admin only)*
 
 | Method | Endpoint | Description |
 |---|---|---|
 | `POST` | `/api/v1/users` | Create a new user |
 | `GET` | `/api/v1/users` | List all users |
 
-### 💰 Financial Records
+### Financial Records
 
 | Method | Endpoint | Description |
 |---|---|---|
@@ -118,7 +118,7 @@ Access control is enforced at the API level using dependency-based guards.
 | `PUT` | `/api/v1/records/{id}` | Update a record |
 | `DELETE` | `/api/v1/records/{id}` | Delete a record |
 
-### 📊 Dashboard
+### Dashboard
 
 | Method | Endpoint | Description |
 |---|---|---|
@@ -135,7 +135,7 @@ The dashboard summary includes:
 
 ---
 
-## 📦 Features
+## Features
 
 ### 1. User Management
 - Create users and assign roles (`Viewer`, `Analyst`, `Admin`)
@@ -153,14 +153,14 @@ The dashboard summary includes:
 - Monthly trends
 - Recent activity feed
 
-### 4. Validation & Error Handling
+### 4. Validation and Error Handling
 - Schema validation via **Pydantic**
 - Meaningful HTTP status codes (`400`, `401`, `403`, `404`, `422`)
 - Enum normalization for resilient client integration
 
 ---
 
-## ⚙️ Setup Instructions
+## Setup Instructions
 
 ### Prerequisites
 - [Docker](https://www.docker.com/) & Docker Compose installed
@@ -190,7 +190,7 @@ http://localhost:8000/docs
 
 ---
 
-## 🔐 Authentication
+## Authentication
 
 All protected endpoints require a JWT token in the `Authorization` header:
 
@@ -214,7 +214,7 @@ A default **admin user** is seeded on first startup with the credentials above.
 
 ---
 
-## 🧪 Testing
+## Testing
 
 Unit tests are written with **pytest** and cover authentication, user management, record operations, and dashboard analytics.
 
@@ -232,18 +232,18 @@ Test coverage includes:
 
 ---
 
-## ⚖️ Trade-offs Considered
+## Trade-offs Considered
 
 | Decision | Choice Made | Rationale |
 |---|---|---|
 | Simplicity vs Scalability | Layered monolith | Keeps the system readable and suitable for assignment scope; structured for future microservice extraction |
 | On-demand Analytics vs Performance | Calculated at request time | Simple to implement; Redis caching can be added in production for scale |
-| Flexible Input vs Strict Validation | Enum normalization (`"ADMIN"` → `"admin"`) | Makes the API resilient to inconsistent client inputs while enforcing strict internal contracts |
+| Flexible Input vs Strict Validation | Enum normalization (`"ADMIN"` to `"admin"`) | Makes the API resilient to inconsistent client inputs while enforcing strict internal contracts |
 | Monolith vs Distributed | Monolith with clean service/repository separation | Clear boundaries make it straightforward to split into microservices later if needed |
 
 ---
 
-## 🧠 Assumptions
+## Assumptions
 
 - Authentication is simplified using stateless JWT (no refresh token rotation)
 - Financial data is scoped per user — users only access their own records
@@ -252,7 +252,7 @@ Test coverage includes:
 
 ---
 
-## ✨ Possible Enhancements
+## Possible Enhancements
 
 - [ ] Cursor-based pagination & full-text search
 - [ ] Redis caching for dashboard analytics
@@ -264,7 +264,7 @@ Test coverage includes:
 
 ---
 
-## 👤 Author
+## Author
 
 **Anmol Chauhan** — Backend Developer Intern Candidate
 
