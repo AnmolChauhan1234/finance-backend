@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, Field, ConfigDict, field_validator
 from typing import Optional
 from datetime import datetime
 
@@ -11,6 +11,14 @@ class FinancialRecordBase(BaseModel):
     category: str = Field(..., min_length=1, max_length=100)
     notes: Optional[str] = None
 
+    # FIX: normalize enum input
+    @field_validator("type", mode="before")
+    @classmethod
+    def normalize_type(cls, v):
+        if isinstance(v, str):
+            return v.lower()
+        return v
+
 
 class FinancialRecordCreate(FinancialRecordBase):
     date: Optional[datetime] = None
@@ -22,6 +30,14 @@ class FinancialRecordUpdate(BaseModel):
     category: Optional[str] = Field(None, min_length=1, max_length=100)
     date: Optional[datetime] = None
     notes: Optional[str] = None
+
+    # FIX here also
+    @field_validator("type", mode="before")
+    @classmethod
+    def normalize_type(cls, v):
+        if isinstance(v, str):
+            return v.lower()
+        return v
 
 
 class FinancialRecordResponse(BaseModel):

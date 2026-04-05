@@ -1,5 +1,5 @@
 from typing import List, Optional
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status, Body
 
 from app.api import deps
 from app.schemas.financial_record import (
@@ -24,14 +24,13 @@ def read_records(
     current_user: User = Depends(deps.require_role([Role.ADMIN, Role.ANALYST])),
     record_service: RecordService = Depends(deps.get_record_service),
 ):
-    records = record_service.list_records(
+    return record_service.list_records(
         user_id=current_user.id,
         skip=skip,
         limit=limit,
         type=type,
         category=category,
     )
-    return records
 
 
 @router.post(
@@ -40,7 +39,7 @@ def read_records(
     status_code=status.HTTP_201_CREATED,
 )
 def create_record(
-    record_in: FinancialRecordCreate,
+    record_in: FinancialRecordCreate = Body(...),  # FIX
     current_user: User = Depends(deps.require_role([Role.ADMIN])),
     record_service: RecordService = Depends(deps.get_record_service),
 ):
@@ -53,7 +52,7 @@ def create_record(
 @router.put("/{record_id}", response_model=FinancialRecordResponse)
 def update_record(
     record_id: int,
-    record_in: FinancialRecordUpdate,
+    record_in: FinancialRecordUpdate = Body(...),  # FIX
     current_user: User = Depends(deps.require_role([Role.ADMIN])),
     record_service: RecordService = Depends(deps.get_record_service),
 ):

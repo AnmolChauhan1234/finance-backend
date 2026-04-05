@@ -10,7 +10,7 @@ class CategoryTotal(BaseModel):
 
 
 class TrendData(BaseModel):
-    period: str
+    period: str  # e.g. "2026-04"
     income: float = Field(..., ge=0)
     expense: float = Field(..., ge=0)
 
@@ -18,7 +18,12 @@ class TrendData(BaseModel):
 class DashboardSummaryResponse(BaseModel):
     total_income: float = Field(..., ge=0)
     total_expense: float = Field(..., ge=0)
-    net_balance: float = Field(...)
+
+    # Better validation
+    net_balance: float = Field(
+        ...,
+        description="Income - Expense (can be negative)"
+    )
 
     category_wise_totals: List[CategoryTotal]
     recent_activity: List[FinancialRecordResponse]

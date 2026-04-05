@@ -90,8 +90,13 @@ from app.core.config import settings
 from app.db.session import SessionLocal
 from app.models.user import User, Role
 from app.schemas.token import TokenPayload
+
+# REPOSITORIES
 from app.repositories.user_repository import UserRepository
 from app.repositories.record_repository import RecordRepository
+from app.repositories.dashboard_repository import DashboardRepository
+
+# SERVICES
 from app.services.user_service import UserService
 from app.services.record_service import RecordService
 from app.services.dashboard_service import DashboardService
@@ -122,6 +127,10 @@ def get_record_repo(db: Session = Depends(get_db)) -> RecordRepository:
     return RecordRepository(db)
 
 
+def get_dashboard_repo(db: Session = Depends(get_db)) -> DashboardRepository:
+    return DashboardRepository(db)
+
+
 # ---------------- SERVICES ----------------
 
 def get_user_service(
@@ -137,7 +146,7 @@ def get_record_service(
 
 
 def get_dashboard_service(
-    repo: RecordRepository = Depends(get_record_repo),
+    repo: DashboardRepository = Depends(get_dashboard_repo),
 ) -> DashboardService:
     return DashboardService(repo)
 

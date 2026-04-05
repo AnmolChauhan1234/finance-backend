@@ -1,5 +1,5 @@
 from typing import List
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status, Body
 
 from app.api import deps
 from app.schemas.user import UserResponse, UserCreate
@@ -26,7 +26,7 @@ def read_users(
     status_code=status.HTTP_201_CREATED,
 )
 def create_user(
-    user_in: UserCreate,
+    user_in: UserCreate = Body(...),  # FIX
     current_user: User = Depends(deps.require_role([Role.ADMIN])),
     user_service: UserService = Depends(deps.get_user_service),
 ):

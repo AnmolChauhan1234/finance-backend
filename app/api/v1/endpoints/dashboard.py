@@ -11,7 +11,7 @@ router = APIRouter()
 
 @router.get("/summary", response_model=DashboardSummaryResponse)
 def read_dashboard_summary(
-    current_user: User = Depends(deps.get_current_user),
     dashboard_service: DashboardService = Depends(deps.get_dashboard_service),
+    current_user: User = Depends(deps.get_current_user),
 ):
     return dashboard_service.get_summary(user_id=current_user.id)
