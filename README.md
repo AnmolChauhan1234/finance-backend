@@ -11,7 +11,7 @@
 ---
 
 ## 📋 Table of Contents
- 
+
 - [Overview](#overview)
 - [Tech Stack](#tech-stack)
 - [Architecture](#architecture)
@@ -24,7 +24,7 @@
 - [Trade-offs Considered](#trade-offs-considered)
 - [Assumptions](#assumptions)
 - [Possible Enhancements](#possible-enhancements)
- 
+
 ---
 
 ## 🚀 Overview
