@@ -1,8 +1,9 @@
-from sqlalchemy.orm import Session
 import logging
+
 from app.db.session import SessionLocal
+from app.repositories.user_repository import UserRepository
+from app.services.user_service import UserService
 from app.schemas.user import UserCreate
-from app.services.user_service import user_service
 from app.models.user import Role
 
 # Explicit imports for Alembic detection
@@ -12,28 +13,32 @@ from app.models.financial_record import FinancialRecord
 logger = logging.getLogger(__name__)
 
 
-def init_db(db: Session) -> None:
+def init_db() -> None:
+    db = SessionLocal()
 
-    user = user_service.get_user_by_email(db, email="admin@example.com")
+    try:
+        user_repo = UserRepository(db)
+        user_service = UserService(user_repo)
 
-    if not user:
-        user_in = UserCreate(
-            email="admin@example.com",
-            password="adminpassword",
-            role=Role.ADMIN,
-            is_active=True,
-        )
-        user_service.create_user(db, user_in=user_in)
+        user = user_service.get_user_by_email("admin@example.com")
 
-        logger.info("Admin user created: admin@example.com / adminpassword")
+        if not user:
+            user_in = UserCreate(
+                email="admin@example.com",
+                password="adminpassword",
+                role=Role.ADMIN,
+                is_active=True,
+            )
+
+            user_service.create_user(user_in)
+
+            logger.info("Admin user created: admin@example.com / adminpassword")
+
+    finally:
+        db.close()
 
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
-    db = SessionLocal()
-
-    try:
-        init_db(db)
-        logger.info("Database initialization completed.")
-    finally:
-        db.close()
+    init_db()
+    logger.info("Database initialization completed.")
