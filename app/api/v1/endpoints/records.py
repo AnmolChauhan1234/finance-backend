@@ -79,3 +79,18 @@ def delete_record(
         )
     except ValueError:
         raise HTTPException(status_code=404, detail="Record not found")
+
+
+@router.patch("/{record_id}/restore", response_model=FinancialRecordResponse)
+def restore_record(
+    record_id: int,
+    current_user: User = Depends(deps.require_role([Role.ADMIN])),
+    record_service: RecordService = Depends(deps.get_record_service),
+):
+    try:
+        return record_service.restore_record(
+            record_id=record_id,
+            user_id=current_user.id,
+        )
+    except ValueError:
+        raise HTTPException(status_code=404, detail="Deleted record not found")

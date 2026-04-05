@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey, Enum
+from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey, Enum, Boolean
 from sqlalchemy.orm import relationship
 import enum
 from datetime import datetime
@@ -25,19 +25,19 @@ class FinancialRecord(Base):
 
     category = Column(String, index=True, nullable=False)
 
-    date = Column(DateTime, default=datetime.utcnow, index=True)
+    date = Column(DateTime, default=datetime.utcnow, index=True, nullable=False)
 
     notes = Column(String, nullable=True)
 
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
 
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
 
     user = relationship("User", back_populates="records")
 
-    # Note: Soft delete feature considerations.
-    # To implement soft delete later as an enhancement, uncomment the following fields
-    # and update query filters consistently to handle `is_deleted == False` states.
-    # is_deleted = Column(Boolean, default=False)
-    # deleted_at = Column(DateTime, nullable=True)
+    # Soft delete (with performance improvement)
+    is_deleted = Column(Boolean, default=False, nullable=False, index=True)
+    deleted_at = Column(DateTime, nullable=True)
 
+    def __repr__(self):
+        return f"<Record id={self.id} amount={self.amount}>"

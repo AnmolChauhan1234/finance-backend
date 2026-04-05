@@ -16,7 +16,8 @@ class RecordRepository:
     def get(self, record_id: int, user_id: int) -> Optional[FinancialRecord]:
         return self.db.query(FinancialRecord).filter(
             FinancialRecord.id == record_id,
-            FinancialRecord.user_id == user_id
+            FinancialRecord.user_id == user_id,
+            FinancialRecord.is_deleted.is_(False),
         ).first()
 
     def create(self, record_in: FinancialRecordCreate, user_id: int) -> FinancialRecord:
@@ -51,12 +52,31 @@ class RecordRepository:
     def delete(self, record_id: int, user_id: int) -> Optional[FinancialRecord]:
         record = self.db.query(FinancialRecord).filter(
             FinancialRecord.id == record_id,
-            FinancialRecord.user_id == user_id
+            FinancialRecord.user_id == user_id,
+            FinancialRecord.is_deleted.is_(False),
         ).first()
 
         if record:
-            self.db.delete(record)
+            record.is_deleted = True
+            record.deleted_at = datetime.utcnow()
             self.db.commit()
+            self.db.refresh(record)
+
+        return record
+
+    def restore(self, record_id: int, user_id: int) -> Optional[FinancialRecord]:
+        """Restore a soft-deleted record."""
+        record = self.db.query(FinancialRecord).filter(
+            FinancialRecord.id == record_id,
+            FinancialRecord.user_id == user_id,
+            FinancialRecord.is_deleted.is_(True),
+        ).first()
+
+        if record:
+            record.is_deleted = False
+            record.deleted_at = None
+            self.db.commit()
+            self.db.refresh(record)
 
         return record
 
@@ -71,7 +91,8 @@ class RecordRepository:
         end_date: Optional[datetime] = None,
     ):
         query = self.db.query(FinancialRecord).filter(
-            FinancialRecord.user_id == user_id
+            FinancialRecord.user_id == user_id,
+            FinancialRecord.is_deleted.is_(False),
         )
 
         if type:

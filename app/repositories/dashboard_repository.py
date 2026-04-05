@@ -17,6 +17,7 @@ class DashboardRepository:
             .filter(
                 FinancialRecord.type == record_type,
                 FinancialRecord.user_id == user_id,
+                FinancialRecord.is_deleted.is_(False),
             )
             .scalar()
         )
@@ -31,7 +32,10 @@ class DashboardRepository:
                 FinancialRecord.category,
                 func.sum(FinancialRecord.amount),
             )
-            .filter(FinancialRecord.user_id == user_id)
+            .filter(
+                FinancialRecord.user_id == user_id,
+                FinancialRecord.is_deleted.is_(False),
+            )
             .group_by(FinancialRecord.category)
             .all()
         )
@@ -43,7 +47,10 @@ class DashboardRepository:
     def get_recent_activity(self, user_id: int, limit: int = 10) -> List[FinancialRecord]:
         return (
             self.db.query(FinancialRecord)
-            .filter(FinancialRecord.user_id == user_id)
+            .filter(
+                FinancialRecord.user_id == user_id,
+                FinancialRecord.is_deleted.is_(False),
+            )
             .order_by(FinancialRecord.date.desc())
             .limit(limit)
             .all()
@@ -60,7 +67,10 @@ class DashboardRepository:
                 FinancialRecord.type,
                 func.sum(FinancialRecord.amount),
             )
-            .filter(FinancialRecord.user_id == user_id)
+            .filter(
+                FinancialRecord.user_id == user_id,
+                FinancialRecord.is_deleted.is_(False),
+            )
             .group_by(
                 func.date_trunc("month", FinancialRecord.date),
                 FinancialRecord.type,

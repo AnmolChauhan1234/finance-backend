@@ -44,6 +44,14 @@ class RecordService:
 
         return record
 
+    def restore_record(self, record_id: int, user_id: int):
+        record = self.repo.restore(record_id, user_id)
+
+        if not record:
+            raise ValueError("Deleted record not found")
+
+        return record
+
     def get_record(
         self,
         record_id: int,
