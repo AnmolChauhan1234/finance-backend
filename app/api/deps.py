@@ -107,7 +107,7 @@ oauth2_scheme = OAuth2PasswordBearer(
 )
 
 
-# ---------------- DATABASE ----------------
+# DATABASE
 
 def get_db() -> Generator[Session, None, None]:
     db = SessionLocal()
@@ -117,7 +117,7 @@ def get_db() -> Generator[Session, None, None]:
         db.close()
 
 
-# ---------------- REPOSITORIES ----------------
+# REPOSITORIES
 
 def get_user_repo(db: Session = Depends(get_db)) -> UserRepository:
     return UserRepository(db)
@@ -131,7 +131,7 @@ def get_dashboard_repo(db: Session = Depends(get_db)) -> DashboardRepository:
     return DashboardRepository(db)
 
 
-# ---------------- SERVICES ----------------
+# SERVICES
 
 def get_user_service(
     repo: UserRepository = Depends(get_user_repo),
@@ -151,7 +151,7 @@ def get_dashboard_service(
     return DashboardService(repo)
 
 
-# ---------------- AUTH ----------------
+# AUTH
 
 def get_current_user(
     user_repo: UserRepository = Depends(get_user_repo),
@@ -195,7 +195,7 @@ def get_current_user(
     return user
 
 
-# ---------------- RBAC ----------------
+# RBAC
 
 def require_role(roles: list[Role]) -> Callable:
     def role_checker(current_user: User = Depends(get_current_user)):

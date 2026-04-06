@@ -39,6 +39,6 @@ class FinancialRecord(Base):
     is_deleted = Column(Boolean, default=False, nullable=False, index=True)
     deleted_at = Column(DateTime, nullable=True)
 
-    # Debugging helper (no impact on logic)
+    # Debugging helper
     def __repr__(self):
         return f"<FinancialRecord id={self.id} amount={self.amount} type={self.type.value}>"

@@ -9,7 +9,7 @@ class DashboardRepository:
     def __init__(self, db: Session):
         self.db = db
 
-    # ---------------- TOTALS ----------------
+    # TOTALS
 
     def get_total_by_type(self, record_type: RecordType, user_id: int) -> float:
         total = (
@@ -24,7 +24,7 @@ class DashboardRepository:
 
         return float(total or 0.0)
 
-    # ---------------- CATEGORY TOTALS ----------------
+    # CATEGORY TOTALS
 
     def get_category_totals(self, user_id: int) -> List[Tuple[str, float]]:
         results = (
@@ -42,7 +42,7 @@ class DashboardRepository:
 
         return [(category, float(total or 0.0)) for category, total in results]
 
-    # ---------------- RECENT ACTIVITY ----------------
+    # RECENT ACTIVITY
 
     def get_recent_activity(self, user_id: int, limit: int = 10) -> List[FinancialRecord]:
         return (
@@ -56,7 +56,7 @@ class DashboardRepository:
             .all()
         )
 
-    # ---------------- MONTHLY TRENDS ----------------
+    # MONTHLY TRENDS
 
     def get_monthly_trends(
         self, user_id: int

@@ -28,7 +28,7 @@ def test_get_records(test_client):
     assert response.status_code == 200
 
 
-# 🔥 Validation test (important)
+# Validation test
 def test_invalid_record_amount(test_client):
     token = get_auth_token(test_client)
 

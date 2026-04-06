@@ -44,6 +44,6 @@ class User(Base):
         cascade="all, delete-orphan"
     )
 
-    # Debugging helper (no impact on logic)
+    # Debugging helper
     def __repr__(self):
         return f"<User id={self.id} role={self.role.value}>"
