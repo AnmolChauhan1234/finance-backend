@@ -30,7 +30,7 @@ def test_list_users(test_client):
     assert response.status_code == 200
 
 
-# RBAC awareness test (important)
+# RBAC awareness test
 def test_unauthorized_access_without_token(test_client):
     response = test_client.get("/api/v1/users")
     assert response.status_code == 401

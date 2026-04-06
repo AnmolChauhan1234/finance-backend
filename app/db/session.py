@@ -4,7 +4,7 @@ from sqlalchemy.orm import sessionmaker
 
 DATABASE_URL = os.environ["DATABASE_URL"]
 
-# ✅ Create engine (clean)
+# Create engine
 engine = create_engine(
     DATABASE_URL,
     pool_pre_ping=True,
@@ -18,7 +18,7 @@ SessionLocal = sessionmaker(
     bind=engine,
 )
 
-# ✅ FastAPI dependency
+# FastAPI dependency
 def get_db():
     db = SessionLocal()
     try:

@@ -20,7 +20,7 @@ services:
     env_file:
       - .env
     volumes:
-      - .:/app   # 🔥 VERY IMPORTANT
+      - .:/app
     depends_on:
       db:
         condition: service_started
