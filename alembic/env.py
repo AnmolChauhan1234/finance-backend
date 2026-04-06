@@ -5,7 +5,7 @@ from sqlalchemy import create_engine, pool
 from alembic import context
 
 from app.db.base import Base
-from app.models import *  # auto-import all models (BEST PRACTICE)
+from app.models import *  # auto-import all models
 
 # Alembic Config
 config = context.config
