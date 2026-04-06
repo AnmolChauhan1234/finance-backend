@@ -5,7 +5,7 @@ from sqlalchemy import create_engine, pool
 from alembic import context
 
 from app.db.base import Base
-from app.models import *  # auto-import all models
+from app.models import *
 
 # Alembic Config
 config = context.config
@@ -33,7 +33,7 @@ def run_migrations_offline() -> None:
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
-        compare_type=True,  # detect column type changes
+        compare_type=True,
     )
 
     with context.begin_transaction():
@@ -45,14 +45,14 @@ def run_migrations_online() -> None:
     connectable = create_engine(
         database_url,
         poolclass=pool.NullPool,
-        pool_pre_ping=True,  # avoids stale connections
+        pool_pre_ping=True,
     )
 
     with connectable.connect() as connection:
         context.configure(
             connection=connection,
             target_metadata=target_metadata,
-            compare_type=True,  # detect schema changes
+            compare_type=True,
         )
 
         with context.begin_transaction():
