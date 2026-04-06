@@ -1,0 +1,9 @@
+# Force Linux-style line endings everywhere
+* text=auto eol=lf
+
+# Critical files
+*.sh text eol=lf
+*.py text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+Dockerfile text eol=lf
