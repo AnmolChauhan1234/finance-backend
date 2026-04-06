@@ -20,6 +20,7 @@
 - [Features](#features)
 - [Soft Delete](#soft-delete)
 - [Setup Instructions](#setup-instructions)
+- [Cross-Platform Compatibility](#cross-platform-compatibility)
 - [Authentication](#authentication)
 - [Testing](#testing)
 - [Trade-offs Considered](#trade-offs-considered)
@@ -198,7 +199,7 @@ A naive implementation just adds a column and forgets about it. This implementat
 ### 1. Clone the Repository
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/AnmolChauhan1234/finance-backend.git
 cd finance-backend
 ```
 
@@ -217,6 +218,12 @@ Migrations run **automatically** on startup via the container entrypoint. No man
 ```
 http://localhost:8000/docs
 ```
+
+---
+
+## Cross-Platform Compatibility
+
+This project enforces Unix (LF) line endings via `.gitattributes` to ensure consistent behaviour across Mac, Linux, and Windows — particularly important for Docker execution where Windows-style (CRLF) line endings can cause shell script failures inside containers.
 
 ---
 
@@ -241,6 +248,8 @@ Content-Type: application/json
 ```
 
 A default **admin user** is seeded on first startup with the credentials above.
+
+> **Note:** The login endpoint uses `OAuth2PasswordRequestForm`, which requires a field named `username`. In this project, the `username` field accepts the user's **email address**.
 
 ---
 
@@ -281,7 +290,6 @@ Test coverage includes:
 - Financial data is scoped per user — users only access their own records
 - No external third-party integrations (focused on core backend logic)
 - Pagination uses offset-based `skip`/`limit` — sufficient for this scope but can be upgraded to cursor-based for large datasets
-- Soft-deleted records are excluded from all queries and analytics unless explicitly restored
 
 ---
 
@@ -304,7 +312,7 @@ This project fulfills all core assignment requirements and goes beyond them with
 - [x] Soft delete with full restore support (`deleted_at` timestamp, enforced in all queries)
 - [x] Offset-based pagination (`skip` / `limit`) on record listing
 - [x] Unit tests with pytest covering auth, users, records, and dashboard
-- [x] Auto-generated API documentation (Swagger UI at `/docs`)
+- [x] Auto-generated API documentation (Swagger UI at `/docs`, ReDoc at `/redoc`)
 - [x] Dockerized setup with single-command startup
 
 ### Further Improvements Possible
@@ -312,9 +320,8 @@ This project fulfills all core assignment requirements and goes beyond them with
 These are production-scale additions beyond the assignment scope that could be added if needed:
 
 - Cursor-based pagination for better performance on large datasets
-- Full-text / fuzzy search across notes and categories using `ILIKE`
+- Full-text / fuzzy search — basic filtering by `type`, `category`, and `date` is implemented; `ILIKE` search across `notes` and fuzzy category matching is not yet added
 - Redis caching for dashboard analytics
-- Rate limiting per user or role
 - JWT refresh token rotation
 - CI/CD pipeline and cloud deployment (AWS / Render)
 
