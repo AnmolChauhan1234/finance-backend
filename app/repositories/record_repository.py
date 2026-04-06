@@ -108,7 +108,7 @@ class RecordRepository:
             query = query.filter(FinancialRecord.date <= end_date)
 
         return (
-            query.order_by(FinancialRecord.date.desc())
+            query.order_by(FinancialRecord.date.desc(), FinancialRecord.id.desc())
             .offset(skip)
             .limit(limit)
             .all()

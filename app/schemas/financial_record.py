@@ -47,7 +47,5 @@ class FinancialRecordResponse(BaseModel):
     category: str
     date: datetime
     notes: Optional[str]
-    is_deleted: bool
-    deleted_at: Optional[datetime] = None
 
     model_config = ConfigDict(from_attributes=True)
