@@ -29,7 +29,7 @@ class UserUpdate(BaseModel):
     is_active: Optional[bool] = None
     password: Optional[str] = Field(None, min_length=6)
 
-    # 🔥 FIX HERE ALSO
+    # FIX HERE ALSO
     @field_validator("role", mode="before")
     @classmethod
     def normalize_role(cls, v):
